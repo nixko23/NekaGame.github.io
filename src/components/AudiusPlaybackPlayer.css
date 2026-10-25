@@ -1,0 +1,208 @@
+.audius-player {
+  position: fixed;
+  z-index: 30;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  width: min(960px, calc(100% - 32px));
+  min-height: 88px;
+  display: grid;
+  grid-template-columns: 64px minmax(160px, 1fr) minmax(300px, 1.35fr);
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  color: #f7f3ff;
+  background: rgba(28, 22, 45, 0.97);
+  border: 1px solid rgba(180, 151, 255, 0.34);
+  border-radius: 16px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(14px);
+}
+
+.audius-player-artwork {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.audius-player-track {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.audius-player-track strong,
+.audius-player-track > span:not(.audius-player-eyebrow) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.audius-player-eyebrow {
+  color: #bda7ff;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.audius-player-track > span:not(.audius-player-eyebrow) {
+  color: #c8c1d6;
+  font-size: 0.86rem;
+}
+
+.audius-player-track a {
+  color: #c8adff;
+  font-size: 0.76rem;
+  width: fit-content;
+}
+
+.audius-player-controls {
+  display: grid;
+  grid-template-columns: auto minmax(100px, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.audius-player-controls button {
+  min-width: 54px;
+  padding: 8px 12px;
+  color: white;
+  font-weight: 700;
+  background: #7955ca;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.audius-player-controls .audius-stop-button {
+  color: #e0d9ee;
+  background: #3a3349;
+}
+
+.audius-progress-label {
+  display: grid;
+  grid-template-columns: auto minmax(50px, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.audius-progress-label input {
+  width: 100%;
+  accent-color: #b99bff;
+}
+
+.audius-time {
+  color: #bdb5cb;
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.audius-player-status,
+.audius-player-error {
+  grid-column: 2 / -1;
+  font-size: 0.78rem;
+}
+
+.audius-player-status { color: #c6b0ff; }
+.audius-player-error { color: #ffaaa9; }
+
+@media (max-width: 650px) {
+  .audius-player {
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: 8px 12px;
+    padding: 10px 12px;
+  }
+
+  .audius-player-artwork { width: 52px; height: 52px; }
+  .audius-player-controls { grid-column: 1 / -1; grid-template-columns: auto minmax(0, 1fr) auto; }
+  .audius-player-status, .audius-player-error { grid-column: 1 / -1; }
+}
+
+.audius-player {
+  max-height: min(72vh, 680px);
+  overflow-y: auto;
+  grid-template-columns: 64px minmax(140px, 1fr) minmax(240px, 1.2fr) auto;
+}
+.audius-player-controls { grid-column: 3; }
+.audius-volume-controls {
+  grid-column: 4;
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: 4px 8px;
+  min-width: 142px;
+  color: #ddd5eb;
+  font-size: 0.75rem;
+}
+.audius-volume-controls label { display: flex; justify-content: space-between; gap: 8px; }
+.audius-volume-controls output { color: #cbb7ff; font-variant-numeric: tabular-nums; }
+.audius-volume-controls input { grid-column: 1 / -1; width: 100%; accent-color: #b99bff; }
+.audius-player-controls input:focus-visible,
+.audius-volume-controls input:focus-visible,
+.audius-player button:focus-visible,
+.audius-queue input:focus-visible { outline: 2px solid #d9c8ff; outline-offset: 3px; }
+.audius-player .audius-mute-button,
+.audius-player .audius-queue-actions button,
+.audius-queue button,
+.audius-next-up button {
+  min-width: 0;
+  padding: 7px 10px;
+  border: 1px solid rgba(211, 194, 255, 0.3);
+  border-radius: 10px;
+  color: #f7f3ff;
+  background: #3a3150;
+  cursor: pointer;
+}
+.audius-player .audius-mute-button { grid-row: 1; font-size: 1.05rem; }
+.audius-queue-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.audius-queue-actions label { display: inline-flex; align-items: center; gap: 7px; color: #d8d0e6; font-size: 0.85rem; }
+.audius-queue-actions input { accent-color: #b99bff; }
+.audius-next-up,
+.audius-queue {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(180, 151, 255, 0.22);
+  border-radius: 12px;
+  background: rgba(13, 10, 24, 0.36);
+  color: #e7e0f1;
+}
+.audius-next-up > span:first-child { color: #c8adff; font-size: 0.75rem; text-transform: uppercase; }
+.audius-next-up strong { margin-left: 4px; }
+.audius-next-up > span:not(:first-child) { color: #c8c1d6; font-size: 0.85rem; }
+.audius-next-up button { margin-left: auto; }
+.audius-queue { display: block; }
+.audius-queue ol { margin: 0; padding-left: 24px; }
+.audius-queue li { display: grid; grid-template-columns: minmax(120px, 1fr) auto auto auto auto; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(180, 151, 255, 0.14); }
+.audius-queue li > span { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.audius-queue small { color: #bdb5cb; }
+.audius-queue em { color: #cfbaff; font-size: 0.72rem; font-style: normal; }
+.audius-queue .queue-next { color: #e9dcff; }
+.audius-queue button:disabled { opacity: 0.42; cursor: default; }
+.audius-player-status { grid-column: 1 / -1; }
+@media (max-width: 850px) {
+  .audius-player { grid-template-columns: 52px minmax(0, 1fr) auto; }
+  .audius-player-artwork { width: 52px; height: 52px; }
+  .audius-player-controls { grid-column: 1 / -1; }
+  .audius-volume-controls { grid-column: 1 / -1; grid-template-columns: auto minmax(0, 1fr); }
+  .audius-volume-controls input { grid-column: 2; }
+  .audius-player .audius-mute-button { grid-row: 1 / span 2; }
+}
+@media (max-width: 520px) {
+  .audius-player { left: 8px; bottom: 8px; transform: none; width: calc(100% - 16px); max-height: 72vh; }
+  .audius-queue li { grid-template-columns: minmax(0, 1fr) repeat(4, auto); gap: 5px; }
+  .audius-queue li > span { grid-column: 1 / -1; }
+  .audius-next-up button { margin-left: 0; }
+}
+
