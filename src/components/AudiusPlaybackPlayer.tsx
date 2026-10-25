@@ -31,7 +31,9 @@ function formatTime(seconds: number): string {
 
 function loadVolume(): number {
   try {
-    const value = Number(localStorage.getItem(VOLUME_STORAGE_KEY))
+    const stored = localStorage.getItem(VOLUME_STORAGE_KEY)
+    if (stored === null) return 0.7
+    const value = Number(stored)
     return Number.isFinite(value) && value >= 0 && value <= 1 ? value : 0.7
   } catch { return 0.7 }
 }

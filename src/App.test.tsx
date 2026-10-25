@@ -27,6 +27,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup()
   vi.unstubAllGlobals()
+  vi.restoreAllMocks()
 })
 
 describe('SoundCloud Discovery user flows', () => {
@@ -131,6 +132,22 @@ describe('SoundCloud Discovery user flows', () => {
     expect(visibleCardNames()).toHaveLength(9)
     await user.click(screen.getByRole('button', { name: /Favorites/ }))
     expect(screen.getByText('No favorites yet. Click the ❤️ icon on tracks to add them.')).toBeTruthy()
+  })
+
+  it('keeps favorites usable when browser storage writes fail', async () => {
+    const user = userEvent.setup()
+    const originalSetItem = Storage.prototype.setItem
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, key: string, value: string) {
+      if (key === 'soundcloud_favorites') throw new DOMException('Storage blocked')
+      return originalSetItem.call(this, key, value)
+    })
+    renderApp()
+
+    await user.click(within(screen.getByRole('article', { name: 'Neon Dreams by Synthwave Master' }))
+      .getByRole('button', { name: 'Add to favorites' }))
+
+    expect(screen.getByRole('button', { name: '❤️ Favorites (1)' })).toBeTruthy()
+    expect(screen.getByRole('status').textContent).toMatch(/browser storage is unavailable/i)
   })
 
   it('restores saved favorites as selected after a fresh app load', async () => {

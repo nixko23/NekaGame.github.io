@@ -279,11 +279,6 @@ function App() {
     }
   }, [searchQuery, searchSource])
 
-  useEffect(() => {
-    const favoriteIds = favorites.map((t) => t.id)
-    localStorage.setItem('soundcloud_favorites', JSON.stringify(favoriteIds))
-  }, [favorites])
-
   const handleSearch = (query: string) => {
     setSearchQuery(query)
     if (searchTimeout.current !== null) window.clearTimeout(searchTimeout.current)
@@ -347,18 +342,19 @@ function App() {
   }
 
   const handleToggleFavorite = (trackId: string) => {
-    setFavorites((prevFavorites) => {
-      const isFavorited = prevFavorites.some((t) => t.id === trackId)
-      if (isFavorited) {
-        return prevFavorites.filter((t) => t.id !== trackId)
-      } else {
-        const track = mockTracks.find((t) => t.id === trackId)
-        if (track) {
-          return [...prevFavorites, { ...track, isFavorite: true }]
-        }
-        return prevFavorites
-      }
-    })
+    const isFavorited = favorites.some((track) => track.id === trackId)
+    const nextFavorites = isFavorited
+      ? favorites.filter((track) => track.id !== trackId)
+      : (() => {
+          const track = mockTracks.find((candidate) => candidate.id === trackId)
+          return track ? [...favorites, { ...track, isFavorite: true }] : favorites
+        })()
+    setFavorites(nextFavorites)
+    try {
+      localStorage.setItem('soundcloud_favorites', JSON.stringify(nextFavorites.map((track) => track.id)))
+    } catch {
+      setFeedbackMessage('Favorites are available for this session, but browser storage is unavailable.')
+    }
   }
 
   const handleFeedback = (

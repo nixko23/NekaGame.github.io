@@ -11,6 +11,27 @@ node_modules
 dist
 dist-ssr
 *.local
+coverage
+.vite
+.cache
+.turbo
+*.tsbuildinfo
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Temporary output
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+Thumbs.db
+Desktop.ini
 
 # Editor directories and files
 .vscode/*

@@ -198,6 +198,21 @@ describe('AudiusPlaybackPlayer', () => {
     expect(audio.muted).toBe(false)
   })
 
+  it('starts unmuted at the default volume when no preference is saved', async () => {
+    const ref = createRef<AudiusPlaybackPlayerHandle>()
+    vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined)
+    vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => undefined)
+    vi.spyOn(HTMLMediaElement.prototype, 'load').mockImplementation(() => undefined)
+    render(<AudiusPlaybackPlayer ref={ref} />)
+
+    await act(async () => { ref.current?.playTrack(track('Default1', 'Default Volume')) })
+    const audio = document.querySelector('audio')!
+    expect((screen.getByRole('slider', { name: 'Volume' }) as HTMLInputElement).value).toBe('0.7')
+    expect(audio.volume).toBe(0.7)
+    expect(audio.muted).toBe(false)
+    expect(screen.getByText('70%')).toBeTruthy()
+  })
+
   it('restores saved volume and safely revalidates a persisted queue', async () => {
     const savedTrack = track('Persist1', 'Saved Track')
     localStorage.setItem('soundcloud_audius_volume', '0.5')

@@ -1,162 +1,77 @@
 # SoundCloud Discovery
 
-A modern music discovery web application built with React 19, TypeScript, and Vite. Browse tracks by genre, search by title and artist, manage favorites, and explore curated playlists.
+SoundCloud Discovery is a React and TypeScript music-discovery prototype. It combines a provider-independent recommendation engine with a fictional demo catalog, live Audius search and playback for eligible tracks, and MusicBrainz recording metadata search.
 
 ## Features
 
-### ✅ Implemented
+- Personalized ranking and explanations based on Like, Skip, and Dislike feedback.
+- Live Audius search, creator attribution, canonical track links, and explicit user-initiated playback. Tracks play only when Audius reports the existing eligibility conditions; gated or alternate-license tracks are not enabled.
+- Persistent playback queue with reorder, remove, clear, queue-first Next Up, recommendation suggestions, and optional Autoplay Next (off by default).
+- Player seek, volume, mute, and restored volume preference where the browser exposes native media-volume support.
+- MusicBrainz recording search for metadata only; MusicBrainz does not supply audio playback.
+- Fictional demo catalog with genre filters, Favorites, sample Playlists, persistent local feedback, and responsive UI.
 
-- **Track Discovery** - Browse 6 sample tracks with genres, duration, and play counts
-- **Search Functionality** - Real-time search by track title and artist name
-- **Genre Filtering** - Filter tracks by 7 genres (All, Synthwave, Lo-Fi, House, Hip-Hop, Ambient, Indie)
-- **Favorites Management** - Toggle favorite status with heart icon, view favorites count in navigation
-- **Playlist Browser** - View 3 curated playlists with track previews
-- **Tab Navigation** - Switch between Discover and Playlists views
-- **Responsive Design** - Mobile-first layout with breakpoints at 768px
-- **Accessible UI** - Semantic HTML, proper ARIA labels, keyboard-navigable elements
-- **Modern Styling** - Purple gradient theme with smooth animations and hover effects
+Favorites and Playlists currently apply to the demo catalog. Browser preferences and feedback live in localStorage on that browser and are not synced between users or devices.
 
-### Demo Data
+## Technology
 
-All tracks and playlists in this version use mock data. These are not real SoundCloud tracks:
-- Mock tracks: "Neon Dreams", "Lo-Fi Beats", "Deep House Sessions", "Hip-Hop Cipher", "Ambient Meditation", "Indie Folk Tales"
-- Mock playlists: "Late Night Vibes", "Workout Pulse", "Chill Study Beats"
-- Placeholder images from placeholder.com
+- React 19, TypeScript 6, Vite 8
+- npm and the committed `package-lock.json`
+- Vitest, jsdom, React Testing Library, and user-event
+- A small Node.js production server for static assets and the MusicBrainz proxy
 
-## Tech Stack
+Use Node.js **22.18+ and below 25**. `.node-version` pins the current deployment/CI runtime to 24.21.0.
 
-- **React** 19.3.1 with TypeScript
-- **Build Tool** Vite 8.3.5
-- **Styling** CSS3 with flexbox and grid
-- **Package Manager** npm
-- **Linter** Oxlint
-- **Type Checking** TypeScript (strict mode)
+## Local setup
 
-## Project Structure
-
-```
-src/
-├── App.tsx                    # Main component with state management
-├── App.css                    # Application styling (800+ lines)
-├── index.css                  # Global styles and CSS reset
-├── types.ts                   # TypeScript interfaces
-├── main.tsx                   # React entry point
-└── components/
-    ├── SearchBar.tsx          # Search input with real-time filtering
-    ├── TrackCard.tsx          # Individual track display
-    ├── GenreFilter.tsx        # Genre filter buttons
-    └── PlaylistView.tsx       # Playlist card component
-```
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+ 
-- npm 9+
-
-### Installation
-
-```bash
-npm install
-```
-
-### Development
-
-```bash
+```sh
+npm ci
 npm run dev
 ```
 
-Starts the development server at `http://localhost:5173` (or next available port).
+Vite prints the development URL (normally `http://localhost:5173/`). The development server includes the MusicBrainz proxy middleware.
 
-### Build
+## Checks and production build
 
-```bash
+```sh
+npm test -- --run
+npm run lint
+npx tsc -b --pretty false
 npm run build
 ```
 
-Creates an optimized production build in the `dist/` directory.
+Run the production build and same-origin API proxy locally with:
 
-### Preview Production Build
-
-```bash
-npm run preview
+```sh
+npm run build
+npm start
 ```
 
-Serves the production build for testing.
+The production server listens on `PORT` when provided by the host, or port 3000 locally. It serves `dist/`, handles extensionless paths with the app entry point, and exposes `/api/musicbrainz/search` on the same origin. `npm run preview` is Vite's preview helper; `npm start` exercises the production server used by hosting.
 
-### Linting
+## Configuration and secrets
 
-```bash
-npm run lint
-```
+No API key, OAuth secret, or deployment secret is required. Audius public search, public stream routes, and MusicBrainz search use public endpoints. The hosting platform supplies `PORT`.
 
-Runs Oxlint to check code quality.
+`VITE_BASE_PATH` is an optional **build-time public asset path**, not a secret. The default `/` is for a domain root. For a static project-subpath build, set a value such as `/repository-name/`. Never put secrets in a `VITE_` variable because Vite embeds client variables into the browser bundle.
 
-## Features Details
+## GitHub and deployment
 
-### Search
+The repository includes a GitHub Actions workflow at `.github/workflows/verify.yml` that installs from the lockfile and runs tests, lint, TypeScript, and build for pushes and pull requests.
 
-- **Real-time Search**: Type to search across track titles and artist names
-- **Case-insensitive**: Searches work regardless of character case
-- **Clear Button**: Quickly clear search to see all tracks
-- **Debounced**: 500ms delay prevents excessive re-renders
+The recommended host is a **Render Node Web Service**. The app needs a same-origin server for MusicBrainz's identifying User-Agent and rate-limited proxy; a static-only host would break that feature. `render.yaml` defines a single-instance web service, production build/start commands, health check, and deploys after GitHub checks pass. See [DEPLOYMENT.md](DEPLOYMENT.md) for repository and hosting setup.
 
-### Genre Filtering
+Do not push this working directory to a repository unless you have confirmed its remote points to the new SoundCloud Discovery repository. Do not commit `node_modules`, `dist`, `.env` files, credentials, or tokens. No LICENSE file has been selected; choose and add a license before granting reuse permissions.
 
-- **7 Genre Options**: All Genres, Synthwave, Lo-Fi, House, Hip-Hop, Ambient, Indie
-- **Active State**: Currently selected genre is highlighted
-- **Combines with Search**: Genre filter works in conjunction with search results
+## Provider and product limitations
 
-### Favorites
-
-- **Toggle System**: Click heart icon to add/remove from favorites
-- **Visual Feedback**: Heart changes from white to red when favorited
-- **Counter Display**: Navigation shows active favorite count
-- **Session-based**: Favorites reset on page refresh (no persistence)
-
-### Playlists
-
-- **Preview Cards**: Each playlist shows name, description, and track count
-- **Track Preview**: First 3 tracks displayed in each playlist
-- **Interactive Buttons**: Play button appears on hover (placeholder functionality)
-
-### Responsive Design
-
-- **Desktop**: Multi-column grid layout for tracks and playlists
-- **Tablet**: 2-3 column layout with adjusted spacing
-- **Mobile**: Single column with optimized touch targets
-- **Navigation**: Responsive menu with proper spacing on all devices
-
-### Accessibility
-
-- **Semantic HTML**: Proper use of `<header>`, `<nav>`, `<main>`, `<footer>`
-- **ARIA Labels**: Button titles describe actions ("Add to favorites", "Remove from favorites")
-- **Focus States**: All interactive elements are keyboard-navigable
-- **Image Alt Text**: All images have descriptive alt attributes
-- **Color Contrast**: Text meets WCAG contrast requirements
-- **Error States**: "No tracks found" message when search returns empty results
-
-## Known Limitations
-
-1. **Mock Data Only**: No real SoundCloud API integration yet
-2. **No Audio Playback**: Play buttons are visual placeholders
-3. **No Persistence**: Favorites are not saved between sessions
-4. **No User Accounts**: No authentication or user profiles
-5. **Placeholder Images**: All track/playlist images are from placeholder.com
-6. **Limited Tracks**: Only 6 sample tracks in the current version
-
-## Build Output
-
-Production build is optimized:
-- **CSS**: 6.58 KB (1.82 KB gzipped)
-- **JavaScript**: 226.45 KB (70.68 KB gzipped)
-- **Build Time**: ~110ms
-
-## Next Steps
-
-See [NEXT_STEPS.md](./NEXT_STEPS.md) for planned development stages, including API integration investigation and feature enhancements.
+- Audius requests run directly from the browser and were tested against the real API. Availability, CORS, track metadata, and stream rights remain controlled by Audius and each creator. The current app fails closed for unknown, alternate-license, gated, or restricted tracks. Technical playback does not establish provider approval or legal clearance for this app's recommendation use.
+- MusicBrainz search uses a Node-side proxy that sends an identifying User-Agent and serializes requests to at most one per second. Keep the service at one instance unless the limiter is replaced with a shared/global limiter. MusicBrainz can return 503/429 and the UI reports those errors.
+- See [Audius feasibility and playback status](AUDIUS_FEASIBILITY.md) and [MusicBrainz API status](MUSICBRAINZ_API_STATUS.md) for provider-specific notes and remaining questions.
+- MusicBrainz results are metadata only. The demo catalog is fictional. No Spotify, SoundCloud API, login, server database, cross-device persistence, or commercial release approval is included.
+- Browser volume adjustment depends on native `HTMLMediaElement.volume` support. The app reflects saved preference and mute state; a recent in-app browser inspection did not expose the media element's numeric volume for independent loudness verification.
+- The product name does not imply affiliation with SoundCloud.
 
 ## License
 
-MIT
+No project license has been chosen. All rights remain with their respective owners unless a license is added.
